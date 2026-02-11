@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Escolar Nuevo León</title>
+    <link rel="stylesheet" href="../static/formulario.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="../static/img/logo.png" alt="Gobierno de NL" class="nav-logo">
+            <span class="logo-text">GOBIERNO DE NL</span>
+        </div>
+        
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+        
+        <div class="nav-links" id="navLinks">
+            <a href="/">Inicio</a>
+            <a href="/inscripcion" class="active">Inscripcion</a>
+            <a href="/reinscripcion">Reinscripción</a>
+            <a href="/soporte">Soporte</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="univ-header">
+            <img src="{{ url_for('static', filename='img/logo_universidad.png') }}" alt="Logo Universidad" class="univ-logo">
+        </div>
+
+        <div class="card">
+    <h2 style="color: var(--nl-green);">Formulario de Inscripción (Nuevo Ingreso)</h2>
+    <form action="/submit" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Nombre Completo del Alumno</label>
+            <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required>
+        </div>
+        
+        <div class="docs-box">
+            <h4>Carga de Documentación</h4>
+
+            <div class="form-group">
+                <label>Acta de Nacimiento (PDF/JPG)</label>
+                <input type="file" name="doc_acta">
+            </div>
+
+            <div class="form-group">
+                <label>Certificado de Bachillerato</label>
+                <input type="file" name="doc_cert">
+            </div>
+        </div>
+
+
+        <button type="submit" class="btn-primary">ENVIAR INSCRIPCIÓN</button>
+    </form>
+</div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <p><i class="fas fa-phone"></i> +52 81 8124 8400</p>
+                <p><i class="fas fa-envelope"></i> soporte@utsc.edu.mx</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces Rápidos</h4>
+                <a href="/inscripcion">Nueva Inscripción</a><br>
+                <a href="/contacto">Ubicación de Planteles</a>
+            </div>
+            <div class="footer-section">
+                <h4>Gobierno de Nuevo León</h4>
+                <p>Secretaría de Educación</p>
+                <p>© 2026 - Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
