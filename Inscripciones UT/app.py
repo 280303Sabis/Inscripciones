@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
@@ -5,19 +7,24 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
+# Cargar variables de entorno
+load_dotenv()
+
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-# Clave secreta para sesiones
-app.secret_key = "advpjsh"
+# Clave secreta para sesiones (desde .env)
+app.secret_key = os.environ.get('SECRET_KEY', 'advpjsh')
 
-# Configuración de MongoDB Atlas
-client = MongoClient("mongodb+srv://fgrimaldo:Fagm0601@cluster0.bsa2xga.mongodb.net/?appName=Cluster0")
+# Configuración de MongoDB Atlas (desde .env)
+MONGO_URI = os.environ.get('MONGO_URI', "mongodb+srv://fgrimaldo:Fagm0601@cluster0.bsa2xga.mongodb.net/?appName=Cluster0")
+client = MongoClient(MONGO_URI)
 db = client['Users']
 collection = db['Users']
 
-# Configuración de SendGrid
-SENDGRID_API_KEY = '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' 
+# Configuración de SendGrid (desde .env)
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
+FROM_EMAIL = os.environ.get('FROM_EMAIL', 'fgrimaldo@corpsierramadre.com')
 
 # Serializador para crear y verificar tokens
 serializer = Serializer(app.secret_key, salt='password-reset-salt')
@@ -25,7 +32,7 @@ serializer = Serializer(app.secret_key, salt='password-reset-salt')
 # Función para enviar correos
 def enviar_email(destinatario, asunto, cuerpo):
     mensaje = Mail(
-        from_email='fgrimaldo@corpsierramadre.com',
+        from_email=FROM_EMAIL,
         to_emails=destinatario,
         subject=asunto,
         html_content=cuerpo
@@ -50,15 +57,12 @@ def registro():
         email = request.form['email']
         contrasena = request.form['contrasena']
 
-        # Verificar si el correo ya está registrado
         if collection.find_one({'email': email}):
             flash("El correo electrónico ya está registrado.")
             return redirect(url_for('registro'))
 
-        # Hashear la contraseña
         hashed_password = bcrypt.generate_password_hash(contrasena).decode('utf-8')
 
-        # Insertar usuario en la base de datos
         collection.insert_one({
             'usuario': usuario,
             'email': email,
@@ -76,10 +80,8 @@ def login():
         usuario = request.form['usuario']
         contrasena = request.form['contrasena']
 
-        # Buscar al usuario en la base de datos
         user = collection.find_one({'usuario': usuario})
         
-        # Verificar si las credenciales son correctas
         if user and bcrypt.check_password_hash(user['contrasena'], contrasena):
             session['usuario'] = usuario
             return redirect(url_for('pagina_principal'))
@@ -153,7 +155,6 @@ def logout():
 def inscripcion():
     return render_template('inscripcion.html')
 
-
 @app.route('/reinscripcion')
 def reinscripcion():
     return render_template('reinscripcion.html')
@@ -162,6 +163,5 @@ def reinscripcion():
 def soporte():
     return render_template("soporte.html")
 
-
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)
