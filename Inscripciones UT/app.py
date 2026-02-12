@@ -151,17 +151,22 @@ def logout():
     session.pop('usuario', None)
     return redirect(url_for('login'))
 
+# ============ CAMBIOS DE TU COMPAÑERO (AGREGADOS) ============
 @app.route('/inscripcion')
 def inscripcion():
-    return render_template('inscripcion.html')
+    usuario = session.get('usuario')
+    return render_template('inscripcion.html', usuario=usuario)
 
 @app.route('/reinscripcion')
 def reinscripcion():
-    return render_template('reinscripcion.html')
+    usuario = session.get('usuario')  
+    return render_template('reinscripcion.html', usuario=usuario)
 
 @app.route("/soporte")
 def soporte():
-    return render_template("soporte.html")
+    usuario = session.get('usuario')
+    return render_template("soporte.html", usuario=usuario)
+# ============================================================
 
 if __name__ == '__main__':
     app.run(debug=True)
